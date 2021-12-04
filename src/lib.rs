@@ -29,6 +29,7 @@ pub enum Command {
 }
 
 impl Command {
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str(s: &str) -> Option<Self> {
         let mut split = s.split(' ');
         match (
