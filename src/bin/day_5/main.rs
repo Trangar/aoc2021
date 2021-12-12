@@ -58,7 +58,7 @@ impl Grid {
         let mut max = (0, 0);
         for line in input.lines() {
             let mut parts = line
-                .split(&[',', '-', '>', ' '])
+                .split(&[',', '-', '>', ' '][..])
                 .filter(|s| !s.trim().is_empty());
             let line = Line {
                 start: (

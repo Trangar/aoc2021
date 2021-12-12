@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 fn main() {
     let test = include_str!("../../../input/day_11_test.txt")
         .lines()
@@ -15,19 +17,23 @@ fn main() {
 }
 
 fn part_1(mut lines: Vec<Vec<u8>>) -> usize {
+    let start = Instant::now();
     let mut total = 0;
     for _ in 0..100 {
         total += increase_and_flash(&mut lines);
     }
+    println!("Part 1: {:?}", start.elapsed());
     total
 }
 fn part_2(mut lines: Vec<Vec<u8>>) -> usize {
+    let start = Instant::now();
     let expected = lines.iter().map(|row| row.len()).sum::<usize>();
     let mut it = 0;
     loop {
         it += 1;
         let flashes = increase_and_flash(&mut lines);
         if flashes == expected {
+            println!("Part 2: {:?}", start.elapsed());
             return it;
         }
     }
