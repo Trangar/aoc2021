@@ -37,12 +37,10 @@ fn part_1(system: &CaveSystem) -> usize {
         for adjacent in system.points[last_point].1.iter().copied() {
             let mut adjacent_path = path.clone();
             adjacent_path.push(adjacent);
-            if system.path_is_valid(&adjacent_path) {
-                if system.end == adjacent {
-                    paths_done.push(adjacent_path);
-                } else {
-                    paths_todo.push(adjacent_path);
-                }
+            if system.end == adjacent {
+                paths_done.push(adjacent_path);
+            } else if system.path_is_valid(&adjacent_path) {
+                paths_todo.push(adjacent_path);
             }
         }
     }
