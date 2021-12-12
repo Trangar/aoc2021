@@ -6,15 +6,25 @@ fn main() {
     let test_3 = CaveSystem::new(include_str!("../../../input/day_12_test_3.txt"));
     let input = CaveSystem::new(include_str!("../../../input/day_12_input.txt"));
 
-    assert_eq!(10, dbg!(part_1(&test_1)));
-    assert_eq!(19, dbg!(part_1(&test_2)));
-    assert_eq!(226, dbg!(part_1(&test_3)));
+    assert_eq!(10, part_1(&test_1));
+    assert_eq!(19, part_1(&test_2));
+    assert_eq!(226, part_1(&test_3));
     dbg!(part_1(&input));
 
-    assert_eq!(36, dbg!(part_2(&test_1)));
-    assert_eq!(103, dbg!(part_2(&test_2)));
-    assert_eq!(3509, dbg!(part_2(&test_3)));
+    assert_eq!(10, part_1_recursive(&test_1));
+    assert_eq!(19, part_1_recursive(&test_2));
+    assert_eq!(226, part_1_recursive(&test_3));
+    dbg!(part_1_recursive(&input));
+
+    assert_eq!(36, part_2(&test_1));
+    assert_eq!(103, part_2(&test_2));
+    assert_eq!(3509, part_2(&test_3));
     dbg!(part_2(&input));
+
+    assert_eq!(36, part_2_recursive(&test_1));
+    assert_eq!(103, part_2_recursive(&test_2));
+    assert_eq!(3509, part_2_recursive(&test_3));
+    dbg!(part_2_recursive(&input));
 }
 
 fn part_1(system: &CaveSystem) -> usize {
@@ -27,8 +37,7 @@ fn part_1(system: &CaveSystem) -> usize {
         for adjacent in system.points[last_point].1.iter().copied() {
             let mut adjacent_path = path.clone();
             adjacent_path.push(adjacent);
-            if paths_done.contains(&adjacent_path) || paths_todo.contains(&adjacent_path) {
-            } else if system.path_is_valid(&adjacent_path) {
+            if system.path_is_valid(&adjacent_path) {
                 if system.end == adjacent {
                     paths_done.push(adjacent_path);
                 } else {
@@ -41,6 +50,32 @@ fn part_1(system: &CaveSystem) -> usize {
     paths_done.len()
 }
 
+fn part_1_recursive(system: &CaveSystem) -> usize {
+    fn inner(system: &CaveSystem, path: Vec<usize>) -> usize {
+        let last = path.last().copied().unwrap();
+        let mut count = 0;
+        for adjacent in system.points[last].1.iter().copied() {
+            if adjacent == system.start {
+                continue;
+            } else if adjacent == system.end {
+                count += 1;
+            } else {
+                let mut path = path.clone();
+                path.push(adjacent);
+                if !system.path_is_valid(&path) {
+                    continue;
+                }
+                count += inner(system, path);
+            }
+        }
+        count
+    }
+    let start = Instant::now();
+    let result = inner(system, vec![system.start]);
+    println!("Part 1 (recursive) done in {:?}", start.elapsed());
+    result
+}
+
 fn part_2(system: &CaveSystem) -> usize {
     let start = Instant::now();
     let mut paths_done = Vec::new();
@@ -51,8 +86,7 @@ fn part_2(system: &CaveSystem) -> usize {
         for adjacent in system.points[last_point].1.iter().copied() {
             let mut adjacent_path = path.clone();
             adjacent_path.push(adjacent);
-            if paths_done.contains(&adjacent_path) || paths_todo.contains(&adjacent_path) {
-            } else if system.path_is_valid_with_revisit(&adjacent_path) {
+            if system.path_is_valid_with_revisit(&adjacent_path) {
                 if system.end == adjacent {
                     paths_done.push(adjacent_path);
                 } else {
@@ -63,6 +97,32 @@ fn part_2(system: &CaveSystem) -> usize {
     }
     println!("Part 2 done in {:?}", start.elapsed());
     paths_done.len()
+}
+
+fn part_2_recursive(system: &CaveSystem) -> usize {
+    fn inner(system: &CaveSystem, path: Vec<usize>) -> usize {
+        let last = path.last().copied().unwrap();
+        let mut count = 0;
+        for adjacent in system.points[last].1.iter().copied() {
+            if adjacent == system.start {
+                continue;
+            } else if adjacent == system.end {
+                count += 1;
+            } else {
+                let mut path = path.clone();
+                path.push(adjacent);
+                if !system.path_is_valid_with_revisit(&path) {
+                    continue;
+                }
+                count += inner(system, path);
+            }
+        }
+        count
+    }
+    let start = Instant::now();
+    let result = inner(system, vec![system.start]);
+    println!("Part 2 (recursive) done in {:?}", start.elapsed());
+    result
 }
 
 #[derive(Clone, Debug)]
