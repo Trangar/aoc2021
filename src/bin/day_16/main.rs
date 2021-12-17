@@ -178,7 +178,8 @@ impl PacketType {
 
             result = result << 4 | to_u8(&var[1..]) as usize;
 
-            if *var.first().unwrap() == false {
+            let first_bit_is_high = *var.first().unwrap();
+            if !first_bit_is_high {
                 // if the first bit is 0, this is the last value
                 break;
             }
